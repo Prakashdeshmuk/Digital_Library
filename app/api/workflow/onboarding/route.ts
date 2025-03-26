@@ -45,8 +45,19 @@ export const { POST } = serve<InitialData>(async (context) => {
   await context.run("new-signup", async () => {
     await sendEmail({
       email,
-      subject: "Welcome to the platform",
-      message: `Welcome ${fullName}!`,
+      subject: "Welcome to the BookWise",
+      message: `<div style="font-family: Arial, sans-serif; text-align: center; padding: 20px; background-color: #f4f4f4;">
+      <div style="max-width: 600px; background: white; padding: 20px; border-radius: 10px; box-shadow: 0px 4px 10px rgba(0,0,0,0.1);">
+        <h2 style="color: #4CAF50;">Welcome, ${fullName}! 🎉</h2>
+        <p style="font-size: 16px; color: #555;">
+          We're excited to have you on board. Get ready for an amazing journey with us!
+        </p>
+        <a href="digital-library-rho.vercel.app" 
+          style="display: inline-block; padding: 12px 20px; background: #4CAF50; color: white; text-decoration: none; border-radius: 5px; margin-top: 20px;">
+          Explore Now 🚀
+        </a>
+      </div>
+    </div>!`,
     });
   });
 
