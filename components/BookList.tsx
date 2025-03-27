@@ -16,7 +16,7 @@ const BookList = ({ title, books, containerClassName }: Props) => {
 
       <ul className="book-list">
         {books.map((book) => (
-          <BookCard key={book.title} {...book} />
+          <BookCard key={book.createdAt} {...book} />
         ))}
       </ul>
     </section>
