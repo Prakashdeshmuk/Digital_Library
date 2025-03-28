@@ -40,3 +40,11 @@ interface BorrowBookParams {
   bookId: string;
   userId: string;
 }
+
+interface BookTable {
+  title: string;
+  author: string;
+  genre: string;
+  coverUrl: string;
+  createdAt: Date | null;
+}

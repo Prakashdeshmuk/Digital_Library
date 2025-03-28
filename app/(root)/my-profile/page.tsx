@@ -30,8 +30,7 @@ const Page = async () => {
     .innerJoin(books, eq(borrowRecords.bookId, books.id))
     .where(session?.user?.id ? eq(borrowRecords.userId, session.user.id) : undefined)
     .orderBy(desc(borrowRecords.borrowDate))) as Book[];
-
-  console.log(result);
+  
   return (
     <>
       <form
