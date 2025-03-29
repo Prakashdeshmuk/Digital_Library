@@ -25,13 +25,13 @@ const BorrowBook = ({
   const [borrowing, setBorrowing] = useState(false);
 
   const handleBorrowBook = async () => {
-    if (!isEligible) {
-      toast({
-        title: "Error",
-        description: message,
-        variant: "destructive",
-      });
-    }
+    // if (!isEligible) {
+    //   toast({
+    //     title: "Error",
+    //     description: message,
+    //     variant: "destructive",
+    //   });
+    // }
 
     setBorrowing(true);
 
