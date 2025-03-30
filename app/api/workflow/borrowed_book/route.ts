@@ -120,7 +120,7 @@ export const { POST } = serve<InitialData>(async (context) => {
             <p>A new book request has been submitted:</p>
             
             <div class="book-details">
-              <img src=${coverImage} alt="BOOK_TITLE_HERE" class="book-image">
+              <img src="${coverImage}" alt="${title}" class="book-image">
               <div class="book-info">
                 <div class="book-title">${title}</div>
                 <div class="book-author">${author}</div>
