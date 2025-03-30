@@ -12,7 +12,12 @@ export const borrowBook = async (params: BorrowBookParams) => {
 
   try {
     const book = await db
-      .select({ availableCopies: books.availableCopies, title: books.title })
+      .select({
+        availableCopies: books.availableCopies,
+        title: books.title,
+        author: books.author,
+        coverUrl: books.coverUrl,
+      })
       .from(books)
       .where(eq(books.id, bookId))
       .limit(1);
@@ -61,6 +66,8 @@ export const borrowBook = async (params: BorrowBookParams) => {
         fullName: usercredentials[0].fullName,
         email: usercredentials[0].email,
         title: book[0].title,
+        author: book[0].author,
+        coverImage: `config.env.imagekit.urlEndpoint/${book[0].coverUrl}`,
       },
     });
 
