@@ -67,10 +67,9 @@ export const borrowBook = async (params: BorrowBookParams) => {
         email: usercredentials[0].email,
         title: book[0].title,
         author: book[0].author,
-        coverImage: `config.env.imagekit.urlEndpoint${book[0].coverUrl}`,
+        coverImage: `${config.env.imagekit.urlEndpoint}${book[0].coverUrl}`,
       },
     });
-
     return {
       success: true,
       data: JSON.parse(JSON.stringify(record)),
