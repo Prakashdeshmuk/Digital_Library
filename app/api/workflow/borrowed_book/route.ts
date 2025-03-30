@@ -5,12 +5,13 @@ type InitialData = {
   email: string;
   fullName: string;
   title: string;
-  coverImage: string;
-  author: string;
+  borrowDate: string;
+  returnDate: string;
 };
 
 export const { POST } = serve<InitialData>(async (context) => {
-  const { email, fullName, title, coverImage, author } = context.requestPayload;
+  const { email, fullName, title, borrowDate, returnDate } =
+    context.requestPayload;
 
   // Welcome Email
   await context.run("book-request-sent", async () => {
@@ -22,121 +23,157 @@ export const { POST } = serve<InitialData>(async (context) => {
       <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Book Request</title>
+        <title>BookWise Email Template</title>
         <style>
+          /* Email Template Styles */
           body {
-            font-family: 'Arial', sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-          }
-          .email-container {
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            overflow: hidden;
-          }
-          .header {
-            background-color: #6E59A5;
-            padding: 20px;
-            text-align: center;
-            color: white;
-          }
-          .content {
-            padding: 30px;
-            background-color: #ffffff;
-          }
-          .book-details {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7fafc;
             display: flex;
-            margin-bottom: 25px;
-            background-color: #f8f8f8;
-            border-radius: 6px;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 16px;
+          }
+
+          .email-container {
+            max-width: 600px;
+            width: 100%;
+            margin: 0 auto;
             overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
           }
-          .book-image {
-            width: 130px;
-            height: 200px;
-            object-fit: cover;
-          }
-          .book-info {
-            padding: 15px;
-            flex: 1;
-          }
-          .book-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: #6E59A5;
-            margin-bottom: 5px;
-          }
-          .book-author {
-            font-style: italic;
-            color: #666;
-            margin-bottom: 15px;
-          }
-          .request-info {
-            background-color: #f3f0fb;
-            padding: 15px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-            border-left: 4px solid #6E59A5;
-          }
-          .user-name {
-            font-weight: bold;
-            font-size: 16px;
-          }
-          .request-id {
-            font-family: monospace;
-            background-color: #f1f1f1;
-            padding: 3px 6px;
-            border-radius: 3px;
-            font-size: 12px;
-          }
-          .footer {
-            background-color: #f3f0fb;
-            padding: 15px;
-            text-align: center;
-            font-size: 12px;
-            color: #666;
-          }
-          .button {
-            display: inline-block;
-            background-color: #6E59A5;
+
+          .email-content {
+            background-color: #171923;
             color: white;
-            text-decoration: none;
-            padding: 10px 20px;
+            padding: 24px;
+          }
+
+          .email-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #2D3748;
+            margin-bottom: 24px;
+          }
+
+          .email-icon {
+            height: 24px;
+            width: 24px;
+            color: white;
+          }
+
+          .header-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin: 0;
+          }
+
+          .email-body {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+          }
+
+          .email-subject {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin: 0;
+          }
+
+          .details-list {
+            list-style-type: disc;
+            margin-left: 24px;
+          }
+
+          .details-list li {
+            margin-bottom: 4px;
+          }
+
+          .highlight {
+            font-weight: 600;
+          }
+
+          .button-container {
+            padding-top: 8px;
+          }
+
+          .view-button {
+            background-color: #F6E05E;
+            color: #171923;
+            font-weight: 500;
+            padding: 8px 16px;
+            border: none;
             border-radius: 4px;
-            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+          }
+
+          .view-button:hover {
+            background-color: #ECC94B;
+          }
+
+          .email-footer {
+            padding-top: 16px;
+          }
+
+          .email-footer p {
+            margin: 4px 0;
+          }
+
+          /* SVG Icon */
+          .book-icon {
+            width: 24px;
+            height: 24px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
           }
         </style>
       </head>
       <body>
         <div class="email-container">
-          <div class="header">
-            <h1>📚 Book Request</h1>
-          </div>
-          
-          <div class="content">
-            <p>A new book request has been submitted:</p>
-            
-            <div class="book-details">
-              <img src="${coverImage}" alt="${title}" class="book-image">
-              <div class="book-info">
-                <div class="book-title">${title}</div>
-                <div class="book-author">${author}</div>
+          <div class="email-content">
+            <!-- Header with Logo -->
+            <div class="email-header">
+              <svg xmlns="http://www.w3.org/2000/svg" class="book-icon" viewBox="0 0 24 24">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+              </svg>
+              <h1 class="header-title">BookWise</h1>
+            </div>
+
+            <!-- Main Content -->
+            <div class="email-body">
+              <h2 class="email-subject">You've Borrowed a Book!</h2>
+              
+              <p>Hi ${fullName},</p>
+              
+              <p>You've successfully borrowed ${title}. Here are the details:</p>
+              
+              <ul class="details-list">
+                <li>Borrowed On: <span class="highlight">${borrowDate}</span></li>
+                <li>Due Date: <span class="highlight">${returnDate}</span></li>
+              </ul>
+              
+              <p>Enjoy your reading, and don't forget to return the book on time!</p>
+              
+              <div class="button-container">
+                <button class="view-button">View Borrowed Books</button>
+              </div>
+              
+              <div class="email-footer">
+                <p>Happy reading,</p>
+                <p>The BookWise Team</p>
               </div>
             </div>
-            
-            <div class="request-info">
-              <p><span class="user-name">${fullName}</span> has requested to borrow this book.</p>
-              <p>Team Bookwise reach out as early as Possible</p>
-            </div>
-            
-          </div>
-          
-          <div class="footer">
-            <p>This is an automated notification from the Library Management System.</p>
-            <p>&copy; 2023 Bookish Requests. All rights reserved.</p>
           </div>
         </div>
       </body>

@@ -15,8 +15,6 @@ export const borrowBook = async (params: BorrowBookParams) => {
       .select({
         availableCopies: books.availableCopies,
         title: books.title,
-        author: books.author,
-        coverUrl: books.coverUrl,
       })
       .from(books)
       .where(eq(books.id, bookId))
@@ -49,6 +47,17 @@ export const borrowBook = async (params: BorrowBookParams) => {
       status: "BORROWED",
     });
 
+    const borrowedRecords = await db
+      .select({
+        borrowedDate: borrowRecords.borrowDate,
+        returnDate: borrowRecords.returnDate,
+      })
+      .from(borrowRecords)
+      .where(
+        and(eq(borrowRecords.userId, userId), eq(borrowRecords.bookId, bookId))
+      )
+      .limit(1);
+
     await db
       .update(books)
       .set({ availableCopies: book[0].availableCopies - 1 })
@@ -66,8 +75,8 @@ export const borrowBook = async (params: BorrowBookParams) => {
         fullName: usercredentials[0].fullName,
         email: usercredentials[0].email,
         title: book[0].title,
-        author: book[0].author,
-        coverImage: `${config.env.imagekit.urlEndpoint}${book[0].coverUrl}`,
+        borrowDate: borrowedRecords[0].borrowedDate,
+        returnDate: borrowedRecords[0].returnDate,
       },
     });
     return {
