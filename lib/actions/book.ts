@@ -1,16 +1,18 @@
 "use server";
 
 import { db } from "@/database/drizzle";
-import { books, borrowRecords } from "@/database/schema";
+import { books, borrowRecords, users } from "@/database/schema";
 import { and, eq } from "drizzle-orm";
 import dayjs from "dayjs";
+import { workflowClient } from "@/lib/workflow";
+import config from "@/lib/config";
 
 export const borrowBook = async (params: BorrowBookParams) => {
   const { userId, bookId } = params;
 
   try {
     const book = await db
-      .select({ availableCopies: books.availableCopies })
+      .select({ availableCopies: books.availableCopies, title: books.title })
       .from(books)
       .where(eq(books.id, bookId))
       .limit(1);
@@ -46,6 +48,21 @@ export const borrowBook = async (params: BorrowBookParams) => {
       .update(books)
       .set({ availableCopies: book[0].availableCopies - 1 })
       .where(eq(books.id, bookId));
+
+    const usercredentials = await db
+      .select({ fullName: users.fullName, email: users.email })
+      .from(users)
+      .where(eq(users.id, userId))
+      .limit(1);
+
+    await workflowClient.trigger({
+      url: `${config.env.prodApiEndpoint}/api/workflow/borrowed_book`,
+      body: {
+        fullName: usercredentials[0].fullName,
+        email: usercredentials[0].email,
+        title: book[0].title,
+      },
+    });
 
     return {
       success: true,
