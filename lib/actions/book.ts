@@ -50,7 +50,7 @@ export const borrowBook = async (params: BorrowBookParams) => {
     const borrowedRecords = await db
       .select({
         borrowedDate: borrowRecords.borrowDate,
-        returnDate: borrowRecords.returnDate,
+        dueDate: borrowRecords.dueDate,
       })
       .from(borrowRecords)
       .where(
@@ -76,7 +76,7 @@ export const borrowBook = async (params: BorrowBookParams) => {
         email: usercredentials[0].email,
         title: book[0].title,
         borrowDate: borrowedRecords[0].borrowedDate,
-        returnDate: borrowedRecords[0].returnDate,
+        dueDate: borrowedRecords[0].dueDate,
       },
     });
     return {
