@@ -49,6 +49,9 @@ export const books = pgTable("books", {
   videoUrl: text("video_url").notNull(),
   summary: varchar("summary").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+  titlePhonetic: text("title_phonetic"),
+  authorPhonetic: text("author_phonetic"),
+  genrePhonetic: text("genre_phonetic")
 });
 
 export const borrowRecords = pgTable("borrow_records", {

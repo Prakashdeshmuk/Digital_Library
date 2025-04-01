@@ -1,6 +1,6 @@
 {
-  "id": "f729e06d-1145-4e03-9757-b694f7f3a979",
-  "prevId": "4b1f5e41-cbb7-4d89-9360-148da2e816f2",
+  "id": "d6e78439-368b-4a79-86b2-ff3312a750b3",
+  "prevId": "73f05ca5-c1ae-4233-a9d3-a5ac32b69293",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -89,6 +89,24 @@
           "primaryKey": false,
           "notNull": false,
           "default": "now()"
+        },
+        "title_phonetic": {
+          "name": "title_phonetic",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "author_phonetic": {
+          "name": "author_phonetic",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "genre_phonetic": {
+          "name": "genre_phonetic",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},
@@ -97,10 +115,10 @@
       "uniqueConstraints": {
         "books_id_unique": {
           "name": "books_id_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "id"
-          ]
+          ],
+          "nullsNotDistinct": false
         }
       },
       "policies": {},
@@ -170,38 +188,38 @@
         "borrow_records_user_id_users_id_fk": {
           "name": "borrow_records_user_id_users_id_fk",
           "tableFrom": "borrow_records",
-          "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
+          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "borrow_records_book_id_books_id_fk": {
           "name": "borrow_records_book_id_books_id_fk",
           "tableFrom": "borrow_records",
-          "tableTo": "books",
           "columnsFrom": [
             "book_id"
           ],
+          "tableTo": "books",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "borrow_records_id_unique": {
           "name": "borrow_records_id_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "id"
-          ]
+          ],
+          "nullsNotDistinct": false
         }
       },
       "policies": {},
@@ -286,24 +304,24 @@
       "uniqueConstraints": {
         "users_id_unique": {
           "name": "users_id_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "id"
-          ]
+          ],
+          "nullsNotDistinct": false
         },
         "users_email_unique": {
           "name": "users_email_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "email"
-          ]
+          ],
+          "nullsNotDistinct": false
         },
         "users_university_id_unique": {
           "name": "users_university_id_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "university_id"
-          ]
+          ],
+          "nullsNotDistinct": false
         }
       },
       "policies": {},
@@ -339,10 +357,10 @@
     }
   },
   "schemas": {},
+  "views": {},
   "sequences": {},
   "roles": {},
   "policies": {},
-  "views": {},
   "_meta": {
     "columns": {},
     "schemas": {},

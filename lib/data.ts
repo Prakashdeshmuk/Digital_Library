@@ -26,7 +26,9 @@ export const totalBookspages = async () => {
 
 export const fetchfilterdbooks = async (query: string, currentPage: number) => {
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
-  const result = (await db
+
+  // Base query
+  let baseQuery = db
     .select({
       coverUrl: books.coverUrl,
       title: books.title,
@@ -35,17 +37,29 @@ export const fetchfilterdbooks = async (query: string, currentPage: number) => {
       createdAt: books.createdAt,
     })
     .from(books)
-    .where(
-      or(
-        sql`${books.title} ILIKE ${`%${query}%`}`,
-        sql`${books.author} ILIKE ${`%${query}%`}`,
-        sql`${books.genre} ILIKE ${`%${query}%`}`,
-        sql`${books.createdAt}::text ILIKE ${`%${query}%`}`
-      )
-    )
     .orderBy(desc(books.createdAt))
     .limit(ITEMS_PER_PAGE)
-    .offset(offset)) as BookTable[];
+    .offset(offset);
+
+  // If query is empty, return all records
+  if (!query || query.trim() === "") {
+    return (await baseQuery) as BookTable[];
+  }
+
+  // Use Phonetic, Lexical, and Fuzzy Search
+  const result = (await baseQuery.where(
+    or(
+      sql`${books.titlePhonetic} = dmetaphone(${query})`,
+      sql`${books.authorPhonetic} = dmetaphone(${query})`,
+      sql`${books.genrePhonetic} = dmetaphone(${query})`,
+      sql`${books.title} ILIKE ${`%${query}%`}`,
+      sql`${books.author} ILIKE ${`%${query}%`}`,
+      sql`${books.genre} ILIKE ${`%${query}%`}`,
+      sql`${books.title} % ${query}`, // Fuzzy search using Trigrams
+      sql`${books.author} % ${query}`,
+      sql`${books.genre} % ${query}`
+    )
+  )) as BookTable[];
 
   return result;
 };

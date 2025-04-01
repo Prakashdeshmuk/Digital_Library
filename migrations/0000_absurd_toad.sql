@@ -1,4 +1,6 @@
 CREATE TYPE "public"."borrow_status" AS ENUM('BORROWED', 'RETURNED');--> statement-breakpoint
+CREATE TYPE "public"."role" AS ENUM('USER', 'ADMIN');--> statement-breakpoint
+CREATE TYPE "public"."status" AS ENUM('PENDING', 'APPROVED', 'REJECTED');--> statement-breakpoint
 CREATE TABLE "books" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"title" varchar(255) NOT NULL,
@@ -13,6 +15,9 @@ CREATE TABLE "books" (
 	"video_url" text NOT NULL,
 	"summary" varchar NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now(),
+	"title_phonetic" text,
+	"author_phonetic" text,
+	"genre_phonetic" text,
 	CONSTRAINT "books_id_unique" UNIQUE("id")
 );
 --> statement-breakpoint
@@ -26,6 +31,22 @@ CREATE TABLE "borrow_records" (
 	"status" "borrow_status" DEFAULT 'BORROWED' NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now(),
 	CONSTRAINT "borrow_records_id_unique" UNIQUE("id")
+);
+--> statement-breakpoint
+CREATE TABLE "users" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"full_name" varchar(255) NOT NULL,
+	"email" text NOT NULL,
+	"university_id" integer NOT NULL,
+	"password" text NOT NULL,
+	"university_card" text NOT NULL,
+	"status" "status" DEFAULT 'PENDING',
+	"role" "role" DEFAULT 'USER',
+	"last_activity_date" date DEFAULT now(),
+	"created_at" timestamp with time zone DEFAULT now(),
+	CONSTRAINT "users_id_unique" UNIQUE("id"),
+	CONSTRAINT "users_email_unique" UNIQUE("email"),
+	CONSTRAINT "users_university_id_unique" UNIQUE("university_id")
 );
 --> statement-breakpoint
 ALTER TABLE "borrow_records" ADD CONSTRAINT "borrow_records_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
