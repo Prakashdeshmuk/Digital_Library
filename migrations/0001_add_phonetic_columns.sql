@@ -1,6 +1,4 @@
 -- Custom SQL migration file, put your code below! --
-
-
 -- Update the new columns with phonetic values
 UPDATE books
 SET 

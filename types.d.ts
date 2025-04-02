@@ -48,3 +48,10 @@ interface BookTable {
   coverUrl: string;
   createdAt: Date | null;
 }
+
+interface UserTable {
+  fullName: string;
+  email: string;
+  role: string;
+  lastActivityDate: Date | null;
+}

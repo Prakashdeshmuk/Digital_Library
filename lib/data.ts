@@ -1,13 +1,38 @@
+import { auth } from "@/auth";
 import { db } from "@/database/drizzle";
-import { books } from "@/database/schema";
+import { books, borrowRecords, users } from "@/database/schema";
+import { create } from "domain";
 import { desc, sql } from "drizzle-orm";
-import { or } from "drizzle-orm";
+import { or, eq } from "drizzle-orm";
 
 const ITEMS_PER_PAGE = 6;
 
-const totalborrowedpages = ({ query }: { query: string }) => {
+export const totalborrowedpages = async () => {
   try {
-  } catch (error) {}
+    const result = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(borrowRecords);
+
+    const count = +result[0].count;
+
+    return Math.ceil(count / ITEMS_PER_PAGE);
+  } catch (error) {
+    return 0;
+  }
+};
+
+export const totaluserpage = async () => {
+  try {
+    const result = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(users);
+
+    const count = +result[0].count;
+
+    return Math.ceil(count / ITEMS_PER_PAGE);
+  } catch (error) {
+    return 0;
+  }
 };
 
 export const totalBookspages = async () => {
@@ -24,11 +49,69 @@ export const totalBookspages = async () => {
   }
 };
 
+export const fetchfilterdborrowedRecords = async (
+  query: string,
+  currentPage: number
+) => {
+  const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+
+  const result = await db
+    .select({
+      userName: users.fullName,
+      bookTitle: books.title,
+      bookAuthor: books.author,
+      borrowDate: borrowRecords.borrowDate,
+    })
+    .from(borrowRecords)
+    .innerJoin(users, eq(borrowRecords.userId, users.id))
+    .innerJoin(books, eq(borrowRecords.bookId, books.id))
+    .where(
+      or(
+        sql`${users.fullName} ILIKE ${`%${query}%`}`,
+        sql`${books.title} ILIKE ${`%${query}%`}`,
+        sql`${books.author}::TEXT ILIKE ${`%${query}%`}`,
+        sql`${borrowRecords.borrowDate}::text ILIKE ${`%${query}%`}`
+      )
+    )
+    .orderBy(desc(borrowRecords.borrowDate))
+    .limit(ITEMS_PER_PAGE)
+    .offset(offset);
+
+  return result;
+};
+
+export const fetchfilterdusers = async (query: string, currentPage: number) => {
+  const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+
+  // Base query
+  const result = db
+    .select({
+      fullName: users.fullName,
+      email: users.email,
+      role: users.role,
+      lastActivityDate: users.lastActivityDate,
+    })
+    .from(users)
+    .where(
+      or(
+        sql`${users.fullName} ILIKE ${`%${query}%`}`,
+        sql`${users.email} ILIKE ${`%${query}%`}`,
+        sql`${users.role}::TEXT ILIKE ${`%${query}%`}`,
+        sql`${users.lastActivityDate}::text ILIKE ${`%${query}%`}`
+      )
+    )
+    .orderBy(desc(users.createdAt))
+    .limit(ITEMS_PER_PAGE)
+    .offset(offset);
+
+  return result;
+};
+
 export const fetchfilterdbooks = async (query: string, currentPage: number) => {
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
   // Base query
-  let baseQuery = db
+  const baseQuery = db
     .select({
       coverUrl: books.coverUrl,
       title: books.title,
@@ -62,4 +145,78 @@ export const fetchfilterdbooks = async (query: string, currentPage: number) => {
   )) as BookTable[];
 
   return result;
+};
+
+export const fetchrecentaddbooks = async () => {
+  try {
+    const result = await db
+      .select({
+        title: books.title,
+        author: books.author,
+        coverUrl: books.coverUrl,
+        createdAt: books.createdAt,
+      })
+      .from(books)
+      .orderBy(desc(books.createdAt))
+      .limit(ITEMS_PER_PAGE);
+
+    return result;
+  } catch (error) {
+    return [];
+  }
+};
+
+export const fetchrecentborrowedbooks = async () => {
+  try {
+    const result = await db
+      .select({
+        userName: users.fullName,
+        bookTitle: books.title,
+        bookAuthor: books.author,
+        borrowDate: borrowRecords.borrowDate,
+      })
+      .from(borrowRecords)
+      .innerJoin(users, eq(borrowRecords.userId, users.id))
+      .innerJoin(books, eq(borrowRecords.bookId, books.id))
+      .orderBy(desc(borrowRecords.borrowDate))
+      .limit(ITEMS_PER_PAGE);
+
+    return result;
+  } catch (error) {
+    return [];
+  }
+};
+
+export const dashboardData = async () => {
+  try {
+    const borrowedRecords = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(borrowRecords);
+
+    const totalBorrowed = +borrowedRecords[0].count;
+
+    const usersCount = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(users);
+
+    const totalUsers = +usersCount[0].count;
+
+    const booksCount = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(books);
+
+    const totalBooks = +booksCount[0].count;
+
+    return {
+      totalBorrowed,
+      totalUsers,
+      totalBooks,
+    };
+  } catch (error) {
+    return {
+      totalBorrowed: 0,
+      totalUsers: 0,
+      totalBooks: 0,
+    };
+  }
 };
