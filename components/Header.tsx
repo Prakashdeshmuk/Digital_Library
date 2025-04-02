@@ -7,7 +7,13 @@ import Image from "next/image";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Session } from "next-auth";
 
-const Header = ({ session }: { session: Session }) => {
+const Header = ({
+  session,
+  isAdmin,
+}: {
+  session: Session;
+  isAdmin: Boolean;
+}) => {
   const pathname = usePathname();
   return (
     <header className="my-10 flex justify-between gap-5">
@@ -26,6 +32,16 @@ const Header = ({ session }: { session: Session }) => {
             Library
           </Link>
         </li>
+        {isAdmin && (
+          <li>
+            <Link
+              href="/admin"
+              className={"text-base cursor-pointer capitalize text-light-100"}
+            >
+              Admin
+            </Link>
+          </li>
+        )}
         <li>
           <Link href="/my-profile">
             <Avatar>
