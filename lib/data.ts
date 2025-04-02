@@ -220,3 +220,38 @@ export const dashboardData = async () => {
     };
   }
 };
+
+export const fetchSearchBooks = async (query: string, currentPage: number) => {
+  const offset = (currentPage - 1) * ITEMS_PER_PAGE;
+  console.log(query);
+
+  // Base query
+  const baseQuery = db
+    .select()
+    .from(books)
+    .orderBy(desc(books.createdAt))
+    .limit(ITEMS_PER_PAGE)
+    .offset(offset);
+
+  // If query is empty, return all records
+  if (!query || query.trim() === "") {
+    return (await baseQuery) as Book[];
+  }
+
+  // Use Phonetic, Lexical, and Fuzzy Search
+  const result = (await baseQuery.where(
+    or(
+      sql`${books.titlePhonetic} = dmetaphone(${query})`,
+      sql`${books.authorPhonetic} = dmetaphone(${query})`,
+      sql`${books.genrePhonetic} = dmetaphone(${query})`,
+      sql`${books.title} ILIKE ${`%${query}%`}`,
+      sql`${books.author} ILIKE ${`%${query}%`}`,
+      sql`${books.genre} ILIKE ${`%${query}%`}`,
+      sql`${books.title} % ${query}`, // Fuzzy search using Trigrams
+      sql`${books.author} % ${query}`,
+      sql`${books.genre} % ${query}`
+    )
+  )) as Book[];
+
+  return result;
+};

@@ -31,8 +31,7 @@ const Page = async ({
       </div>
 
       <div className="mt-7 w-full overflow-hidden">
-        {/* total books table */}
-
+        
         <div className="mt-6 flow-root">
           <table className="hidden min-w-full text-gray-900 md:table ">
             <thead className="rounded-lg text-left text-sm font-normal bg-">
