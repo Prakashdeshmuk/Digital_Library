@@ -18,7 +18,7 @@ const recentbooks = async () => {
             return (
               <div
                 key={book.title}
-                className={clsx(
+                className=  {clsx(
                   "flex flex-row items-center justify-between py-4",
                   {
                     "border-t": i !== 0,
