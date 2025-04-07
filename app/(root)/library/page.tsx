@@ -15,7 +15,7 @@ const page = async ({
   const currentPage = resolvedSearchParams?.page || 1;
   const totalpages = await totalBookspages();
   const books = await fetchSearchBooks(query, +currentPage);
-  console.log(books);
+  //console.log(books);
   return (
     <>
       <SearchBooks placeholder="Search Books.." />

@@ -127,7 +127,7 @@ export const fetchfilterdbooks = async (query: string, currentPage: number) => {
   // Base query
   const baseQuery = db
     .select({
-      id:books.id,
+      id: books.id,
       coverUrl: books.coverUrl,
       title: books.title,
       author: books.author,
@@ -238,7 +238,7 @@ export const dashboardData = async () => {
 
 export const fetchSearchBooks = async (query: string, currentPage: number) => {
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
-  console.log(query);
+  //console.log(query);
 
   // Base query
   const baseQuery = db
@@ -280,4 +280,3 @@ export const getBookId = async (id: string) => {
     return null; // Or throw the error depending on your use case
   }
 };
-
