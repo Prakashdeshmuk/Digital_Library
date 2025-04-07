@@ -4,6 +4,7 @@ import { books, borrowRecords, users } from "@/database/schema";
 import { create } from "domain";
 import { desc, sql } from "drizzle-orm";
 import { or, eq } from "drizzle-orm";
+import redis from "@/database/redis";
 
 const ITEMS_PER_PAGE = 6;
 
@@ -109,10 +110,24 @@ export const fetchfilterdusers = async (query: string, currentPage: number) => {
 
 export const fetchfilterdbooks = async (query: string, currentPage: number) => {
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
-
+  const cacheKey = `books:${query.trim() || "all"}:page:${currentPage}`;
+  const cachedData = (await redis.get(cacheKey)) as string | null;
+  if (cachedData) {
+    try {
+      return JSON.parse(cachedData) as BookTable[];
+    } catch (error) {
+      console.error(
+        "Failed to parse cached data, clearing cache key:",
+        cacheKey
+      );
+      await redis.del(cacheKey);
+      // Continue to fetch from the database
+    }
+  }
   // Base query
   const baseQuery = db
     .select({
+      id:books.id,
       coverUrl: books.coverUrl,
       title: books.title,
       author: books.author,
@@ -143,7 +158,7 @@ export const fetchfilterdbooks = async (query: string, currentPage: number) => {
       sql`${books.genre} % ${query}`
     )
   )) as BookTable[];
-
+  await redis.set(cacheKey, JSON.stringify(result), { ex: 3600 });
   return result;
 };
 
@@ -255,3 +270,14 @@ export const fetchSearchBooks = async (query: string, currentPage: number) => {
 
   return result;
 };
+
+export const getBookId = async (id: string) => {
+  try {
+    const book = await db.select().from(books).where(eq(books.id, id)).limit(1);
+    return book[0] || null; // Return null if not found
+  } catch (error) {
+    console.error("Error fetching book by ID:", error);
+    return null; // Or throw the error depending on your use case
+  }
+};
+

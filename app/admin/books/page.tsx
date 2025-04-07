@@ -7,6 +7,7 @@ import Image from "next/image";
 import config from "@/lib/config";
 import { formatDateToLocal } from "@/lib/utils";
 import Search from "@/components/Search";
+import { UpdateBook, DeleteBook } from "@/components/admin/button";
 
 const Page = async ({
   searchParams,
@@ -31,7 +32,6 @@ const Page = async ({
       </div>
 
       <div className="mt-7 w-full overflow-hidden">
-        
         <div className="mt-6 flow-root">
           <table className="hidden min-w-full text-gray-900 md:table ">
             <thead className="rounded-lg text-left text-sm font-normal bg-">
@@ -47,6 +47,9 @@ const Page = async ({
                 </th>
                 <th scope="col" className="px-3 py-5 font-medium">
                   Data Created
+                </th>
+                <th scope="col" className="relative py-3 pl-6 pr-3 font-medium">
+                  Edit
                 </th>
               </tr>
             </thead>
@@ -75,6 +78,12 @@ const Page = async ({
                   </td>
                   <td className="whitespace-nowrap px-3 py-3 font-medium">
                     {book.createdAt ? formatDateToLocal(book.createdAt) : "N/A"}
+                  </td>
+                  <td className="whitespace-nowrap py-3 pl-6 pr-3">
+                    <div className="flex justify-end gap-2">
+                      <UpdateBook id={book.id} />
+                      {/* <DeleteBook id={book.id} /> */}
+                    </div>
                   </td>
                 </tr>
               ))}

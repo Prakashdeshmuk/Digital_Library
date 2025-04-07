@@ -19,11 +19,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import FileUpload from "@/components/FileUpload";
 import ColorPicker from "@/components/admin/ColorPicker";
-import { createBook } from "@/lib/admin/action/book";
+import { createBook, updateBook } from "@/lib/admin/action/book";
 import { toast } from "@/hooks/use-toast";
 
 interface Props extends Partial<Book> {
-  type?: "create" | "update";
+  type: "create" | "update";
 }
 
 const BookForm = ({ type, ...book }: Props) => {
@@ -32,35 +32,51 @@ const BookForm = ({ type, ...book }: Props) => {
   const form = useForm<z.infer<typeof bookSchema>>({
     resolver: zodResolver(bookSchema),
     defaultValues: {
-      title: "",
-      description: "",
-      author: "",
-      genre: "",
-      rating: 1,
-      totalCopies: 1,
-      coverUrl: "",
-      coverColor: "",
-      videoUrl: "",
-      summary: "",
+      title: book.title ?? "",
+      description: book.description ?? "",
+      author: book.author ?? "",
+      genre: book.genre ?? "",
+      rating: book.rating ?? 1,
+      totalCopies: book.totalCopies ?? 1,
+      coverUrl: book.coverUrl ?? "",
+      coverColor: book.coverColor ?? "",
+      videoUrl: book.videoUrl ?? "",
+      summary: book.summary ?? "",
     },
   });
 
   const onSubmit = async (values: z.infer<typeof bookSchema>) => {
-    const result = await createBook(values);
+    if (type == "create") {
+      const result = await createBook(values);
 
-    if (result.success) {
-      toast({
-        title: "Success",
-        description: "Book created successfully",
-      });
+      if (result.success) {
+        toast({
+          title: "Success",
+          description: "Book created successfully",
+        });
 
-      router.push(`/admin/books/${result.data.id}`);
+        router.push(`/admin/books/${result.data.id}`);
+      } else {
+        toast({
+          title: "Error",
+          description: result.message,
+          variant: "destructive",
+        });
+      }
     } else {
-      toast({
-        title: "Error",
-        description: result.message,
-        variant: "destructive",
-      });
+      const result = await updateBook(book?.id || "", values);
+      if (result.success) {
+        toast({
+          title: "Sucess",
+          description: "Book Updated Sucessfully",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: result.message,
+          variant: "destructive",
+        });
+      }
     }
   };
 
@@ -283,7 +299,7 @@ const BookForm = ({ type, ...book }: Props) => {
         />
 
         <Button type="submit" className="book-form_btn text-white">
-          Add Book to Library
+          {type == "create" ? "Add Book to Library" : "Update the Book"}
         </Button>
       </form>
     </Form>

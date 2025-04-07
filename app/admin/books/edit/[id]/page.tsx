@@ -2,8 +2,12 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import BookForm from "@/components/admin/forms/BookForm";
-
-const Page = () => {
+import { getBookId } from "@/lib/data";
+const page = async ({ params }: { params: { id: string } }) => {
+  const resolver = await params;
+  const id: string = resolver.id;
+  const book = await getBookId(id);
+  //console.log(book);
   return (
     <>
       <Button asChild className="back-btn">
@@ -11,9 +15,10 @@ const Page = () => {
       </Button>
 
       <section className="w-full max-w-2xl">
-        <BookForm type="create" />
+        <BookForm type="update" {...book} />
       </section>
     </>
   );
 };
-export default Page;
+
+export default page;
