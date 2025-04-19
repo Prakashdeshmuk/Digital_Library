@@ -201,4 +201,22 @@
   .user-card .email {
     @apply text-light-500 text-sm line-clamp-1 break-words w-full;
   }
+  /* Custom Styles for the PDF Viewer */
+  .document-wrapper {
+    @apply w-full h-[600px] overflow-auto bg-light-300;
+  }
+
+  .react-pdf__Page {
+    @apply mx-auto border border-gray-300; /* Center the page and add border */
+  }
+
+  /* Example of adding padding and background for the PDF page container */
+  .pdf-container {
+    @apply w-full h-full p-4 bg-light-100; /* Full width, height, and padding */
+  }
+
+  /* Optional styles for text content */
+  .react-pdf__Page__textContent {
+    @apply text-sm text-dark-600; /* Example: Apply custom font size and color for text */
+  }
 }

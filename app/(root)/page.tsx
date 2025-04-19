@@ -4,6 +4,7 @@ import { db } from "@/database/drizzle";
 import { books, users } from "@/database/schema";
 import { auth } from "@/auth";
 import { desc } from "drizzle-orm";
+import Sample from "@/components/Sample";
 
 const Home = async () => {
   const session = await auth();

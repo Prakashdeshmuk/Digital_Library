@@ -15,6 +15,7 @@ const config = {
       qstashToken: process.env.QSTASH_TOKEN!,
     },
     resendToken: process.env.RESEND_TOKEN!,
+    gemini_key:process.env.GEMINI_API_KEY!,
   },
 };
 

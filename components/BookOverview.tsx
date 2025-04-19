@@ -5,6 +5,7 @@ import BorrowBook from "@/components/BorrowBook";
 import { db } from "@/database/drizzle";
 import { users } from "@/database/schema";
 import { eq } from "drizzle-orm";
+import DigitalBook from "./DigitalBook";
 
 interface Props extends Book {
   userId: string;
@@ -68,13 +69,14 @@ const BookOverview = async ({
 
         <p className="book-description">{description}</p>
 
-        {user && (
+        <div className="flex gap-4">
           <BorrowBook
             bookId={id}
             userId={userId}
             borrowingEligibility={borrowingEligibility}
           />
-        )}
+          <DigitalBook bookId={id} />
+        </div>
       </div>
 
       <div className="relative flex flex-1 justify-center">
