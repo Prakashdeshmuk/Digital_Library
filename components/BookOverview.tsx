@@ -75,7 +75,7 @@ const BookOverview = async ({
             userId={userId}
             borrowingEligibility={borrowingEligibility}
           />
-          <DigitalBook bookId={id} />
+          <DigitalBook booktitle={title} />
         </div>
       </div>
 

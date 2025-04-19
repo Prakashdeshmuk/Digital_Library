@@ -4,10 +4,10 @@ import { useRouter } from "next/navigation";
 import { Button } from "./ui/button";
 import Image from "next/image";
 
-const DigitalBook = ({ bookId }: { bookId: string }) => {
+const DigitalBook = ({ booktitle }: { booktitle: string }) => {
   const router = useRouter();
   const handler = () => {
-    router.push(`/books/${bookId}`)
+    router.push(`/pdf/${booktitle}`)
   };
   return (
     <Button className="book-overview_btn" onClick={handler}>

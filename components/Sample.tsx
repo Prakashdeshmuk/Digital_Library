@@ -24,13 +24,13 @@ const resizeObserverOptions = {};
 
 const maxWidth = 800;
 
-type PDFFile = string | File | null;
+type PDFFile = string | File | null | undefined;
 
 interface Props {
   file?: PDFFile;
 }
 export default function Sample({ file: initialFile }: Props) {
-  const [file, setFile] = useState<PDFFile>(initialFile || "/Algorithms.pdf");
+  const [file, setFile] = useState<PDFFile>(initialFile || "/sample.pdf");
   const [numPages, setNumPages] = useState<number>();
   const [containerRef, setContainerRef] = useState<HTMLElement | null>(null);
   const [containerWidth, setContainerWidth] = useState<number>();
